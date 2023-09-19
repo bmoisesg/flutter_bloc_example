@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc_example1/bloc/inheritedwidget.dart';
+import 'package:flutter_bloc_example1/bloc/login_bloc.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -8,30 +10,23 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int contador = 0;
-
-  fntIncrement() {
-    contador++;
-    setState(() {});
-  }
-
-  fntDecrement() {
-    contador--;
-    setState(() {});
-  }
+  var bloc = LoginBloc();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text(
-          'Home',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    return MyInheriteWidget(
+      loginBloc: bloc,
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          title: const Text(
+            'Home',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
         ),
+        body: _buildBody(),
       ),
-      body: _buildBody(),
     );
   }
 
@@ -48,9 +43,14 @@ class _HomeState extends State<Home> {
         Container(
           color: Theme.of(context).colorScheme.inversePrimary,
           child: Center(
-            child: Text(
-              contador.toString(),
-              style: const TextStyle(fontSize: 50),
+            child: AnimatedBuilder(
+              animation: bloc,
+              builder: (context, _) {
+                return Text(
+                  bloc.contador.toString(),
+                  style: const TextStyle(fontSize: 50),
+                );
+              },
             ),
           ),
         ),
@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: fntIncrement,
+                  onPressed: bloc.onEventIncrement,
                   child: const Text(
                     '+',
                     style: TextStyle(fontSize: 50),
@@ -73,7 +73,7 @@ class _HomeState extends State<Home> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: fntDecrement,
+                  onPressed: bloc.onEventDecrement,
                   child: const Text(
                     '-',
                     style: TextStyle(fontSize: 50),
